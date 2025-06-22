@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculus Calculator Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .glass-effect {
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+    </style>
+</head>
+
+<body class="min-h-screen gradient-bg flex items-center justify-center p-4">
+    <div class="glass-effect rounded-2xl p-8 border border-white/20 shadow-2xl max-w-md w-full text-center">
+        <div class="mb-6">
+            <i class="fas fa-calculator text-6xl text-white mb-4"></i>
+            <h1 class="text-3xl font-bold text-white mb-2">Calculus Calculator</h1>
+            <p class="text-white/80">Advanced mathematical calculator for calculus operations</p>
+        </div>
+
+        <div class="space-y-4 mb-8">
+            <div class="bg-white/10 rounded-lg p-4 text-left">
+                <h3 class="text-white font-semibold mb-2">✨ Features:</h3>
+                <ul class="text-white/90 text-sm space-y-1">
+                    <li>• Differentiation with step-by-step solutions</li>
+                    <li>• Integration (definite & indefinite)</li>
+                    <li>• Beautiful glass morphism UI</li>
+                    <li>• Calculation history</li>
+                    <li>• Multiple function support</li>
+                    <li>• Mobile responsive design</li>
+                </ul>
+            </div>
+
+            <div class="bg-white/10 rounded-lg p-4 text-left">
+                <h3 class="text-white font-semibold mb-2">🧮 Supported Functions:</h3>
+                <div class="grid grid-cols-2 gap-2 text-white/90 text-sm">
+                    <span>• x², x³, polynomials</span>
+                    <span>• sin(x), cos(x), tan(x)</span>
+                    <span>• e^x, ln(x), log(x)</span>
+                    <span>• 1/x, rational functions</span>
+                </div>
+            </div>
+        </div>
+
+        <a href="index.html"
+            class="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+            <i class="fas fa-rocket mr-2"></i>
+            Launch Calculator
+        </a>
+
+        <div class="mt-6 text-white/60 text-sm">
+            <p>Built with HTML, TailwindCSS & JavaScript</p>
+        </div>
+    </div>
+</body>
+
+</html>

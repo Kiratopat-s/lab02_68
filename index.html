@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculus Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        .glass-effect {
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .math-input {
+            font-family: 'Courier New', monospace;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .hover-lift {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+
+        .result-container {
+            min-height: 100px;
+        }
+
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
+</head>
+
+<body class="min-h-screen gradient-bg">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8 fade-in">
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
+                <i class="fas fa-calculator mr-3"></i>
+                Calculus Calculator
+            </h1>
+            <p class="text-xl text-white/80 max-w-2xl mx-auto">
+                Advanced mathematical calculator for differentiation, integration, and more
+            </p>
+        </div>
+
+        <!-- Main Calculator Container -->
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Input Section -->
+            <div class="glass-effect rounded-2xl p-6 border border-white/20 shadow-2xl hover-lift fade-in">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <i class="fas fa-edit mr-3"></i>
+                    Input Function
+                </h2>
+
+                <!-- Function Input -->
+                <div class="mb-6">
+                    <label class="block text-white/90 text-sm font-medium mb-2">
+                        Enter your function f(x):
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="functionInput"
+                            class="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent math-input text-lg"
+                            placeholder="e.g., x^2 + 3*x + 1, sin(x), e^x, ln(x)" value="x^2 + 3*x + 1">
+                        <i
+                            class="fas fa-function absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50"></i>
+                    </div>
+                </div>
+
+                <!-- Variable Input -->
+                <div class="mb-6">
+                    <label class="block text-white/90 text-sm font-medium mb-2">
+                        Variable (default: x):
+                    </label>
+                    <input type="text" id="variableInput"
+                        class="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent math-input"
+                        placeholder="x" value="x">
+                </div>
+
+                <!-- Operation Buttons -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <button onclick="performOperation('derivative')"
+                        class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 hover-lift flex items-center justify-center">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        Differentiate
+                    </button>
+
+                    <button onclick="performOperation('integral')"
+                        class="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 hover-lift flex items-center justify-center">
+                        <i class="fas fa-integral mr-2"></i>
+                        Integrate
+                    </button>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="mb-6">
+                    <button onclick="toggleAdvanced()" class="text-white/80 hover:text-white text-sm flex items-center">
+                        <i class="fas fa-cog mr-2"></i>
+                        <span id="advancedToggleText">Show Advanced Options</span>
+                        <i class="fas fa-chevron-down ml-2" id="advancedChevron"></i>
+                    </button>
+
+                    <div id="advancedOptions" class="hidden mt-4 space-y-4">
+                        <!-- Integration Limits -->
+                        <div id="integrationLimits" class="hidden">
+                            <h4 class="text-white/90 font-medium mb-2">Definite Integration Limits:</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-white/70 text-sm mb-1">Lower limit (a):</label>
+                                    <input type="text" id="lowerLimit"
+                                        class="w-full px-3 py-2 bg-white/10 border border-white/30 rounded text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+                                        placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-white/70 text-sm mb-1">Upper limit (b):</label>
+                                    <input type="text" id="upperLimit"
+                                        class="w-full px-3 py-2 bg-white/10 border border-white/30 rounded text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+                                        placeholder="1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Derivative Order -->
+                        <div id="derivativeOrder" class="hidden">
+                            <label class="block text-white/90 text-sm font-medium mb-2">Derivative Order:</label>
+                            <select id="orderSelect" title="Select derivative order"
+                                class="w-full px-3 py-2 bg-white/10 border border-white/30 rounded text-white focus:outline-none focus:ring-2 focus:ring-white/50">
+                                <option value="1">First derivative (f')</option>
+                                <option value="2">Second derivative (f'')</option>
+                                <option value="3">Third derivative (f''')</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Examples -->
+                <div class="border-t border-white/20 pt-4">
+                    <h4 class="text-white/90 font-medium mb-3">Quick Examples:</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="setFunction('x^2')"
+                            class="px-3 py-1 bg-white/20 hover:bg-white/30 text-white text-sm rounded transition-colors">x²</button>
+                        <button onclick="setFunction('sin(x)')"
+                            class="px-3 py-1 bg-white/20 hover:bg-white/30 text-white text-sm rounded transition-colors">sin(x)</button>
+                        <button onclick="setFunction('e^x')"
+                            class="px-3 py-1 bg-white/20 hover:bg-white/30 text-white text-sm rounded transition-colors">eˣ</button>
+                        <button onclick="setFunction('ln(x)')"
+                            class="px-3 py-1 bg-white/20 hover:bg-white/30 text-white text-sm rounded transition-colors">ln(x)</button>
+                        <button onclick="setFunction('1/x')"
+                            class="px-3 py-1 bg-white/20 hover:bg-white/30 text-white text-sm rounded transition-colors">1/x</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="glass-effect rounded-2xl p-6 border border-white/20 shadow-2xl fade-in">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                    <i class="fas fa-chart-area mr-3"></i>
+                    Results
+                </h2>
+
+                <!-- Loading Indicator -->
+                <div id="loadingIndicator" class="hidden text-center py-8">
+                    <i class="fas fa-spinner loading text-3xl text-white mb-4"></i>
+                    <p class="text-white/80">Calculating...</p>
+                </div>
+
+                <!-- Result Display -->
+                <div id="resultContainer" class="result-container">
+                    <div class="text-center text-white/60 py-12">
+                        <i class="fas fa-calculator text-4xl mb-4"></i>
+                        <p>Enter a function and select an operation to see results</p>
+                    </div>
+                </div>
+
+                <!-- Step-by-step Solution -->
+                <div id="stepsContainer" class="hidden mt-6 border-t border-white/20 pt-6">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+                        <i class="fas fa-list-ol mr-2"></i>
+                        Step-by-step Solution
+                    </h3>
+                    <div id="stepsList" class="space-y-3"></div>
+                </div>
+
+                <!-- Additional Info -->
+                <div id="additionalInfo" class="hidden mt-6 border-t border-white/20 pt-6">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Additional Information
+                    </h3>
+                    <div id="infoContent" class="text-white/80"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="max-w-6xl mx-auto mt-8">
+            <div class="glass-effect rounded-2xl p-6 border border-white/20 shadow-2xl fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center">
+                        <i class="fas fa-history mr-3"></i>
+                        Calculation History
+                    </h2>
+                    <button onclick="clearHistory()"
+                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+                        <i class="fas fa-trash mr-2"></i>
+                        Clear
+                    </button>
+                </div>
+                <div id="historyContainer" class="space-y-3">
+                    <div class="text-center text-white/60 py-8">
+                        <i class="fas fa-clock text-3xl mb-4"></i>
+                        <p>No calculations yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-12 text-white/60">
+            <p>&copy; 2025 Advanced Calculus Calculator. Built with modern web technologies.</p>
+        </div>
+    </div>
+
+    <script src="calculator.js"></script>
+</body>
+
+</html>
