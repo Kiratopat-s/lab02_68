@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirato</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: containerFloat 6s ease-in-out infinite;
+        }
+
+        .info-item {
+            color: white;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border-left: 4px solid #fff;
+            transform: translateX(-50px);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .info-item:hover::before {
+            left: 100%;
+        }
+
+        .info-item:hover {
+            transform: translateX(10px) scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .info-item:active {
+            transform: translateX(10px) scale(0.98);
+        }
+
+        .info-item.animate {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .info-item:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .info-item:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .info-item:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .value {
+            color: #fff;
+            margin-left: 10px;
+        }
+
+        @keyframes containerFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-slide {
+            animation: slideInRight 0.8s ease-out forwards;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #FFD700;
+            border-radius: 50%;
+            animation: sparkle 2s linear infinite;
+        }
+
+        @keyframes sparkle {
+
+            0%,
+            100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Background particles */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 8s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="info-item" id="item1">
+            <span class="label">Student ID:</span>
+            <span class="value">6711860001</span>
+        </div>
+        <div class="info-item" id="item2">
+            <span class="label">Name:</span>
+            <span class="value">Kiratipat</span>
+        </div>
+        <div class="info-item" id="item3">
+            <span class="label">Tel:</span>
+            <span class="value">0992324617</span>
+        </div>
+    </div>
+
+    <script>
+        // Animate items on load
+        window.addEventListener('load', function () {
+            const items = document.querySelectorAll('.info-item');
+            items.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('animate');
+                }, index * 200);
+            });
+        });
+
+        // Add sparkle effect on hover
+        document.querySelectorAll('.info-item').forEach(item => {
+            item.addEventListener('mouseenter', function () {
+                createSparkles(this);
+            });
+        });
+
+        function createSparkles(element) {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    sparkle.style.left = Math.random() * element.offsetWidth + 'px';
+                    sparkle.style.top = Math.random() * element.offsetHeight + 'px';
+                    element.appendChild(sparkle);
+
+                    setTimeout(() => {
+                        sparkle.remove();
+                    }, 2000);
+                }, i * 100);
+            }
+        }
+
+        // Create floating particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.width = particle.style.height = Math.random() * 10 + 5 + 'px';
+            particle.style.animationDuration = Math.random() * 3 + 5 + 's';
+            document.body.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 8000);
+        }
+
+        // Create particles periodically
+        setInterval(createParticle, 500);
+
+        // Add click effect
+        document.querySelectorAll('.info-item').forEach(item => {
+            item.addEventListener('click', function () {
+                this.style.animation = 'none';
+                this.offsetHeight; // Trigger reflow
+                this.style.animation = 'pulse 0.5s ease';
+            });
+        });
+    </script>
+</body>
+
+</html>
